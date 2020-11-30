@@ -5,10 +5,7 @@ import com.godcoder.myhome.repository.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,8 +29,16 @@ public class BoardController {
 
     // form.html의 데이터를 모델에담아서 해당모델 Board()를 자기자신에게보냄
     @GetMapping("/form")
-    public String form(Model model) {
-        model.addAttribute("board", new Board() );
+    // required는 필수값안들어오면 에러창발생 : 이미작성된글을 수정하기떄문에 id가 무조건있음 필수 no
+    public String form(Model model, @RequestParam(required = false) Long id ) {
+        if(id == null) {
+            // id의 값no => 기존대로 board를넘겨줌
+            model.addAttribute("board", new Board() );
+        } else{
+            // id의 값ok => db에 해당id가있는지 찾아서 board에 넣어줌.
+            Board board = boardRepository.findById(id).orElse(null);
+            model.addAttribute("board", board);
+        }
         return "board/form";
     }
 

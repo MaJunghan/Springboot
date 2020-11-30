@@ -21,6 +21,8 @@
 <div class="container">
     <form action="#" th:action="@{/board/form}" th:object="${board}" method="post">
         <h2> 게시판 </h2>
+        <!-- hidden : 사용자에겐 보내지않고 데이터 전송 -->
+        <input type="hidden" class="form-control" id="id" th:field="*{id}">
         <div class="form-group">
             <label for="title"> 글제목 </label>
             <input type="text" class="form-control" id="title" th:field="*{title}">

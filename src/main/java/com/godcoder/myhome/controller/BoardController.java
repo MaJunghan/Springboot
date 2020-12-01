@@ -2,11 +2,14 @@ package com.godcoder.myhome.controller;
 
 import com.godcoder.myhome.model.Board;
 import com.godcoder.myhome.repository.BoardRepository;
+import com.godcoder.myhome.validator.BoardValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -16,7 +19,8 @@ public class BoardController {
     @Autowired
     private BoardRepository boardRepository;
     // @Autowired 사용해서 BoardRepository객체를 사용하겠다
-
+    @Autowired
+    private BoardValidator boardValidator;
 
     // db에 있는 테이블을 list로 뿌리는 메서드
     @GetMapping("/list")
@@ -44,7 +48,11 @@ public class BoardController {
 
     //  ModelAttribute 반환받아서 그걸 db에 save 하고 list페이지로가는것.
     @PostMapping("/form")
-    public String greetingSubmit(@ModelAttribute Board board) {
+    public String greetingSubmit(@Valid Board board,  BindingResult bindingResult) {
+        boardValidator.validate(board, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "board/form";
+        }
         // save : key값이 있으면 update 없으면 insert
         boardRepository.save(board);
         return "redirect:/board/list";
